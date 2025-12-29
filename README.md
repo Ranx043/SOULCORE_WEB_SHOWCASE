@@ -10,160 +10,107 @@
 
 Modern, production-ready web platform built with cutting-edge technologies. Full-stack architecture with separate frontend and backend services, deployed on cloud infrastructure.
 
-```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                      SOUL CORE WEB ARCHITECTURE                          │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                          │
-│    ┌─────────────┐         ┌─────────────┐         ┌─────────────┐     │
-│    │   CLIENT    │────────▶│   VERCEL    │────────▶│  RAILWAY    │     │
-│    │   BROWSER   │         │  (Frontend) │         │  (Backend)  │     │
-│    └─────────────┘         └──────┬──────┘         └──────┬──────┘     │
-│                                   │                       │             │
-│                                   │                       │             │
-│                                   ▼                       ▼             │
-│                            ┌─────────────┐         ┌─────────────┐     │
-│                            │  NEXT.JS 14 │         │   FASTAPI   │     │
-│                            │  App Router │         │   Python    │     │
-│                            └─────────────┘         └──────┬──────┘     │
-│                                                           │             │
-│                                                           ▼             │
-│                                                    ┌─────────────┐     │
-│                                                    │  SUPABASE   │     │
-│                                                    │ (PostgreSQL)│     │
-│                                                    └─────────────┘     │
-│                                                                          │
-└─────────────────────────────────────────────────────────────────────────┘
+---
+
+## System Architecture
+
+```mermaid
+flowchart TB
+    subgraph CLIENT["🌐 Client"]
+        BROWSER[Browser]
+    end
+
+    subgraph FRONTEND["⚡ Frontend - Vercel"]
+        NEXT[Next.js 14<br/>App Router]
+        SSR[Server-Side<br/>Rendering]
+        STATIC[Static<br/>Assets]
+    end
+
+    subgraph BACKEND["🔧 Backend - Railway"]
+        FAST[FastAPI<br/>Python 3.11]
+        AUTH[Auth<br/>Middleware]
+        ROUTES[API<br/>Routes]
+    end
+
+    subgraph DATA["💾 Data - Supabase"]
+        PG[(PostgreSQL)]
+        STORE[Storage]
+        SUPA_AUTH[Auth<br/>Service]
+    end
+
+    BROWSER --> NEXT
+    NEXT --> SSR
+    NEXT --> STATIC
+    NEXT <--> FAST
+    FAST --> AUTH --> ROUTES
+    ROUTES --> PG
+    ROUTES --> STORE
+    AUTH <--> SUPA_AUTH
+
+    style CLIENT fill:#e3f2fd
+    style FRONTEND fill:#e8f5e9
+    style BACKEND fill:#fff3e0
+    style DATA fill:#fce4ec
 ```
 
 ---
 
-## Technical Stack
+## Request Flow
 
-### Frontend
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant V as Vercel (CDN)
+    participant N as Next.js
+    participant F as FastAPI
+    participant S as Supabase
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    FRONTEND STACK                            │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│   Framework:     Next.js 14 (App Router)                   │
-│   Language:      TypeScript                                 │
-│   Styling:       Tailwind CSS                               │
-│   Components:    shadcn/ui                                  │
-│   Deployment:    Vercel (Edge Network)                      │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
-```
+    U->>V: Request page
+    V->>N: Route to Next.js
+    N->>N: Server-Side Render
+    N->>F: API call (if needed)
+    F->>S: Query database
+    S-->>F: Data response
+    F-->>N: JSON response
+    N-->>V: Rendered HTML
+    V-->>U: Complete page
 
-### Backend
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    BACKEND STACK                             │
-├─────────────────────────────────────────────────────────────┤
-│                                                             │
-│   Framework:     FastAPI                                    │
-│   Language:      Python 3.11                                │
-│   Database:      Supabase (PostgreSQL)                      │
-│   Auth:          Supabase Auth                              │
-│   Deployment:    Railway                                    │
-│                                                             │
-└─────────────────────────────────────────────────────────────┘
+    Note over V,N: Edge caching enabled
 ```
 
 ---
 
-## Architecture
+## Tech Stack
 
+```mermaid
+flowchart LR
+    subgraph FRONT["Frontend"]
+        NEXT2[Next.js 14]
+        TS[TypeScript]
+        TW[Tailwind CSS]
+        SHAD[shadcn/ui]
+    end
+
+    subgraph BACK["Backend"]
+        PY[Python 3.11]
+        FAST2[FastAPI]
+        PYD[Pydantic]
+    end
+
+    subgraph INFRA["Infrastructure"]
+        VER[Vercel]
+        RAIL[Railway]
+        SUP[Supabase]
+    end
+
+    NEXT2 --> TS --> TW --> SHAD
+    PY --> FAST2 --> PYD
+    VER --> RAIL --> SUP
+
+    style FRONT fill:#e3f2fd
+    style BACK fill:#fff3e0
+    style INFRA fill:#e8f5e9
 ```
-PROJECT_STRUCTURE/
-├── frontend/          → Next.js 14 Application
-│   ├── app/           → App Router pages
-│   ├── components/    → Reusable UI components
-│   ├── lib/           → Utilities & helpers
-│   └── styles/        → Global styles
-│
-├── backend/           → FastAPI Service
-│   ├── app/           → Main application
-│   ├── api/           → API routes
-│   ├── models/        → Data models
-│   └── services/      → Business logic
-│
-├── shared/            → Shared schemas
-└── docs/              → Documentation
-```
-
----
-
-## Key Features
-
-```
-╔══════════════════════════════════════════════════════════════════╗
-║                        FEATURES                                   ║
-╠══════════════════════════════════════════════════════════════════╣
-║                                                                   ║
-║   ⚡ Server-Side Rendering (SSR) with Next.js 14                 ║
-║   🔐 Secure API with FastAPI                                      ║
-║   📱 Fully Responsive Design                                      ║
-║   🎨 Modern UI with Tailwind + shadcn                            ║
-║   🚀 Edge Deployment (Vercel CDN)                                ║
-║   🗄️ PostgreSQL Database (Supabase)                              ║
-║   🔄 CI/CD Pipeline (Auto-deploy on push)                        ║
-║   📊 Analytics Integration                                        ║
-║                                                                   ║
-╚══════════════════════════════════════════════════════════════════╝
-```
-
----
-
-## Development Standards
-
-```
-╭─────────────────────────────────────────────────────────╮
-│                  CODE QUALITY                            │
-├─────────────────────────────────────────────────────────┤
-│                                                         │
-│  ✓ TypeScript for type safety                          │
-│  ✓ ESLint + Prettier formatting                        │
-│  ✓ Component-based architecture                        │
-│  ✓ API documentation (OpenAPI/Swagger)                 │
-│  ✓ Environment-based configuration                     │
-│  ✓ Separation of concerns                              │
-│                                                         │
-╰─────────────────────────────────────────────────────────╯
-```
-
----
-
-## Deployment Architecture
-
-```
-                    PRODUCTION ENVIRONMENT
-    ┌──────────────────────────────────────────────────┐
-    │                                                  │
-    │   ┌──────────────┐      ┌──────────────┐        │
-    │   │   VERCEL     │      │   RAILWAY    │        │
-    │   │   ────────   │      │   ────────   │        │
-    │   │   Frontend   │◀────▶│   Backend    │        │
-    │   │   CDN Edge   │      │   Container  │        │
-    │   └──────────────┘      └──────┬───────┘        │
-    │                                │                 │
-    │                                ▼                 │
-    │                         ┌──────────────┐        │
-    │                         │   SUPABASE   │        │
-    │                         │   ────────   │        │
-    │                         │   Database   │        │
-    │                         │   Auth       │        │
-    │                         │   Storage    │        │
-    │                         └──────────────┘        │
-    │                                                  │
-    └──────────────────────────────────────────────────┘
-```
-
----
-
-## Technologies Summary
 
 | Layer | Technology | Purpose |
 |-------|------------|---------|
@@ -176,6 +123,146 @@ PROJECT_STRUCTURE/
 | **BaaS** | Supabase | Auth + DB + Storage |
 | **Frontend Host** | Vercel | Edge deployment |
 | **Backend Host** | Railway | Container platform |
+
+---
+
+## Project Structure
+
+```mermaid
+flowchart TB
+    subgraph ROOT["📁 Project Root"]
+        subgraph FE["frontend/"]
+            APP[app/<br/>Pages & Routes]
+            COMP[components/<br/>UI Components]
+            LIB[lib/<br/>Utilities]
+            STYLES[styles/<br/>Global CSS]
+        end
+
+        subgraph BE["backend/"]
+            MAIN[app/<br/>Main App]
+            API[api/<br/>Endpoints]
+            MODELS[models/<br/>Data Models]
+            SERVICES[services/<br/>Business Logic]
+        end
+
+        SHARED[shared/<br/>Common Schemas]
+        DOCS[docs/<br/>Documentation]
+    end
+
+    style ROOT fill:#f5f5f5
+    style FE fill:#e3f2fd
+    style BE fill:#fff3e0
+```
+
+---
+
+## Key Features
+
+```mermaid
+mindmap
+  root((SOUL CORE<br/>Web))
+    Performance
+      SSR with Next.js 14
+      Edge caching
+      Optimized bundles
+    Security
+      JWT Authentication
+      CORS protection
+      Input validation
+    Modern UI
+      Responsive design
+      Dark mode support
+      Accessible components
+    Developer Experience
+      TypeScript
+      Hot reload
+      API auto-docs
+    Deployment
+      CI/CD pipeline
+      Auto-deploy on push
+      Environment configs
+```
+
+---
+
+## Deployment Pipeline
+
+```mermaid
+flowchart LR
+    subgraph DEV["Development"]
+        CODE[Code Push]
+        GIT[GitHub]
+    end
+
+    subgraph CI["CI/CD"]
+        BUILD[Build]
+        TEST[Test]
+        DEPLOY[Deploy]
+    end
+
+    subgraph PROD["Production"]
+        VER2[Vercel<br/>Frontend]
+        RAIL2[Railway<br/>Backend]
+    end
+
+    CODE --> GIT
+    GIT --> BUILD --> TEST --> DEPLOY
+    DEPLOY --> VER2
+    DEPLOY --> RAIL2
+
+    style DEV fill:#e3f2fd
+    style CI fill:#fff3e0
+    style PROD fill:#e8f5e9
+```
+
+---
+
+## API Design
+
+```mermaid
+flowchart TB
+    subgraph ENDPOINTS["API Endpoints"]
+        AUTH_EP["/auth/*"<br/>Authentication]
+        USER_EP["/users/*"<br/>User Management]
+        DATA_EP["/data/*"<br/>Data Operations]
+    end
+
+    subgraph FEATURES["Features"]
+        SWAGGER[OpenAPI/Swagger<br/>Auto Documentation]
+        VALID[Pydantic<br/>Validation]
+        ERR[Error<br/>Handling]
+    end
+
+    AUTH_EP & USER_EP & DATA_EP --> SWAGGER
+    AUTH_EP & USER_EP & DATA_EP --> VALID
+    AUTH_EP & USER_EP & DATA_EP --> ERR
+
+    style ENDPOINTS fill:#e3f2fd
+    style FEATURES fill:#e8f5e9
+```
+
+---
+
+## Development Standards
+
+```mermaid
+flowchart LR
+    TS2[TypeScript<br/>Type Safety]
+    LINT[ESLint<br/>Code Quality]
+    FMT[Prettier<br/>Formatting]
+    COMP2[Component<br/>Architecture]
+    DOC[OpenAPI<br/>Documentation]
+    ENV[Environment<br/>Config]
+
+    TS2 --> LINT --> FMT --> COMP2 --> DOC --> ENV
+
+    style TS2 fill:#e3f2fd
+    style LINT fill:#fff3e0
+    style FMT fill:#e8f5e9
+    style COMP2 fill:#fce4ec
+    style DOC fill:#e3f2fd
+    style ENV fill:#fff3e0
+```
 
 ---
 
