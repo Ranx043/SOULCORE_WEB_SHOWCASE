@@ -2,6 +2,8 @@
 
 ## Full-Stack Web Application | Next.js + FastAPI
 
+### [🔗 Live Demo: soulcore-web.vercel.app](https://soulcore-web.vercel.app)
+
 ---
 
 ## Overview
